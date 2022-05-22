@@ -1,85 +1,88 @@
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-import React, { Component } from "react";
-import DraggableChildComponent from "../draggableChildren/draggableChildren";
-
-class DraggableComponent extends Component {
-  constructor(...args) {
-    super(...args);
-
-    _defineProperty(this, "state", {
-      divs: [],
-      currentDiv: null,
-      toDiv: null
-    });
-
-    _defineProperty(this, "componentDidMount", () => {
-      this.setState({
-        divs: this.props.children
-      });
-    });
-
-    _defineProperty(this, "insertElementBefore", () => {
-      let divs = [...this.state.divs];
-      let currentDiv = this.state.currentDiv;
-      let toDiv = this.state.toDiv;
-      let currentEle;
-
-      if (currentDiv !== toDiv) {
-        currentEle = { ...divs[currentDiv]
-        };
-        divs = divs.filter((val, idx) => {
-          return idx !== currentDiv;
-        });
-        divs.splice(toDiv, 0, currentEle); // This is a hack - Initialize the state as blank and then reset the state
-        // With only 1 setState, the entire component doesnot get rerendered.
-
-        this.setState({
-          divs: [],
-          currentDiv: null,
-          toDiv: null
-        }, () => {
-          this.setState({
-            divs
-          });
-        });
-      }
-
-      if (this.props?.onPosChange) this.props.onPosChange(currentDiv, toDiv, currentEle);
-    });
-
-    _defineProperty(this, "dragStart", idx => {
-      this.setState({
-        currentDiv: idx
-      });
-    });
-
-    _defineProperty(this, "dragEnter", idx => {
-      this.setState({
-        toDiv: idx
-      });
-    });
-
-    _defineProperty(this, "dragDrop", () => {
-      this.insertElementBefore();
-    });
-  }
-
-  render() {
-    let ele = [];
-
-    for (let i = 0; i < this.state.divs.length; i++) {
-      ele.push( /*#__PURE__*/React.createElement(DraggableChildComponent, {
-        dragStart: () => this.dragStart(i),
-        dragEnter: () => this.dragEnter(i),
-        dragEnd: this.dragDrop,
-        key: i
-      }, this.state.divs[i]));
+"use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
     }
-
-    return /*#__PURE__*/React.createElement(React.Fragment, null, ele);
-  }
-
-}
-
-export default DraggableComponent;
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DraggableComponent = void 0;
+var react_1 = __importStar(require("react"));
+var draggable_module_css_1 = __importDefault(require("./draggable.module.css"));
+var DraggableComponent = function (_a) {
+    var children = _a.children, onPosChange = _a.onPosChange;
+    var _b = (0, react_1.useState)([]), elems = _b[0], setElems = _b[1];
+    var _c = (0, react_1.useState)({ to: null, from: null }), indexes = _c[0], setIndexes = _c[1];
+    (0, react_1.useEffect)(function () {
+        setElems(children);
+    }, [children]);
+    var insertElementBefore = (0, react_1.useCallback)(function () {
+        var _a;
+        if (indexes.from && indexes.to && indexes.from !== indexes.to) {
+            var elemsCopy = __spreadArray([], elems, true);
+            _a = [elemsCopy[indexes.to], elemsCopy[indexes.from]], elemsCopy[indexes.from] = _a[0], elemsCopy[indexes.to] = _a[1];
+            setElems(elemsCopy);
+            onPosChange && onPosChange(indexes.from, indexes.to);
+        }
+        setIndexes({ to: null, from: null });
+    }, [indexes, elems, onPosChange, setElems, setIndexes]);
+    var dragStart = (0, react_1.useCallback)(function (idx) {
+        if (idx !== indexes.from)
+            setIndexes(function (state) { return (__assign(__assign({}, state), { from: idx })); });
+    }, [setIndexes, indexes]);
+    var dragEnter = (0, react_1.useCallback)(function (idx) {
+        if (idx !== indexes.to)
+            setIndexes(function (state) { return (__assign(__assign({}, state), { to: idx })); });
+    }, [setIndexes, indexes]);
+    var dragDrop = (0, react_1.useCallback)(function () {
+        insertElementBefore();
+    }, [insertElementBefore]);
+    return react_1.default.createElement(react_1.default.Fragment, null, elems === null || elems === void 0 ? void 0 : elems.map(function (item, i) { return react_1.default.cloneElement(item, {
+        draggable: true,
+        onDragStart: function () { return dragStart(i); },
+        onDragOver: function (e) { dragEnter(i); e.preventDefault(); },
+        onDrop: function () { return dragDrop(); },
+        className: "".concat(item.props.className, " ").concat(draggable_module_css_1.default.grabbable)
+    }); }));
+};
+exports.DraggableComponent = DraggableComponent;

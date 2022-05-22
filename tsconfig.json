@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "declaration": true,
+    "outDir": "./dist",
+    "strict": true,
+		"esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+		"jsx": "react",
+		"pretty": true,
+		"rootDir": "./src/lib"
+  },
+  "include": ["src/lib"],
+  "exclude": ["node_modules", "**/__tests__/*", "public"]
+}

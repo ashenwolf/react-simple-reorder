@@ -1,14 +1,11 @@
-.child {
-	width: 100%;
-}
-
 .grabbable {
 	flex: 1;
-	width: 100%;
+	width: auto;
 	cursor: move; /* fallback if grab cursor is unsupported */
 	cursor: grab;
 	cursor: -moz-grab;
 	cursor: -webkit-grab;
+	background-color: "red";
 }
 
 /* (Optional) Apply a "closed-hand" cursor during drag operation. */

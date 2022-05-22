@@ -1,13 +1,12 @@
 {
-    "name": "react-drag-reorder",
-    "version": "1.2.0",
+    "name": "react-simple-reorder",
+    "version": "1.0.0",
     "private": false,
     "main": "dist/index.js",
     "module": "dist/index.js",
-    "typings": "types/index.d.ts",
+    "typings": "dist/index.d.ts",
     "files": [
         "dist",
-        "types",
         "README.md"
     ],
     "babel": {
@@ -24,14 +23,16 @@
         "type": "git",
         "url": "https://github.com/VaishakVk/react-drag-reorder/"
     },
-    "dependencies": {},
     "devDependencies": {
         "@babel/cli": "^7.8.4",
         "@babel/plugin-proposal-class-properties": "^7.8.3",
         "@babel/preset-react": "^7.8.3",
+        "@types/react": "^18.0.9",
+        "embedme": "^1.22.0",
         "react": "^16.13.0",
         "react-dom": "^16.13.0",
-        "react-scripts": "3.4.0"
+        "react-scripts": "^5.0.1",
+        "typescript": "^4.6.4"
     },
     "keywords": [
         "react",
@@ -42,9 +43,10 @@
     "license": "MIT",
     "scripts": {
         "start": "react-scripts start",
-        "build": "rm -rf dist && mkdir dist && babel ./src/lib --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__",
+        "build": "rm -rf dist && mkdir dist && tsc && cp ./src/lib/components/draggable/*.css ./dist/components/draggable",
         "test": "react-scripts test",
-        "eject": "react-scripts eject"
+        "eject": "react-scripts eject",
+        "prepublish": "embedme README.md"
     },
     "eslintConfig": {
         "extends": "react-app"

@@ -33,15 +33,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -57,12 +48,21 @@ var DraggableComponent = function (_a) {
         setElems(children);
     }, [children]);
     var insertElementBefore = (0, react_1.useCallback)(function () {
-        var _a;
-        if (indexes.from && indexes.to && indexes.from !== indexes.to) {
-            var elemsCopy = __spreadArray([], elems, true);
-            _a = [elemsCopy[indexes.to], elemsCopy[indexes.from]], elemsCopy[indexes.from] = _a[0], elemsCopy[indexes.to] = _a[1];
+        if (indexes.from !== null && indexes.to !== null && indexes.from !== indexes.to) {
+            var from_1 = indexes.from, to_1 = indexes.to;
+            var elemsCopy = elems.flatMap(function (elem, i) {
+                switch (i) {
+                    case to_1:
+                        return to_1 - from_1 > 0 ? [elem, elems[from_1]] : [elems[from_1], elem];
+                    case from_1:
+                        return [];
+                    default:
+                        return [elem];
+                }
+            });
             setElems(elemsCopy);
-            onPosChange && onPosChange(indexes.from, indexes.to);
+            onPosChange &&
+                ((to_1 - from_1 > 0) ? onPosChange(to_1, from_1) : onPosChange(from_1, to_1));
         }
         setIndexes({ to: null, from: null });
     }, [indexes, elems, onPosChange, setElems, setIndexes]);
@@ -78,6 +78,7 @@ var DraggableComponent = function (_a) {
         insertElementBefore();
     }, [insertElementBefore]);
     return react_1.default.createElement(react_1.default.Fragment, null, elems === null || elems === void 0 ? void 0 : elems.map(function (item, i) { return react_1.default.cloneElement(item, {
+        key: "clone-".concat(i),
         draggable: true,
         onDragStart: function () { return dragStart(i); },
         onDragOver: function (e) { dragEnter(i); e.preventDefault(); },

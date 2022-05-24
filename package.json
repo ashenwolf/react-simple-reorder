@@ -1,6 +1,6 @@
 {
     "name": "react-simple-reorder",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "private": false,
     "main": "dist/index.js",
     "module": "dist/index.js",
@@ -47,7 +47,7 @@
         "build": "rm -rf dist && mkdir dist && tsc && cp ./src/lib/components/draggable/*.css ./dist/components/draggable",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "prepublish": "embedme README.md"
+        "prepublish": "npm run build && embedme README.md"
     },
     "eslintConfig": {
         "extends": "react-app"

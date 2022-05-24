@@ -37,9 +37,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DraggableComponent = void 0;
+exports.DraggableComponent = exports.reorder = void 0;
 var react_1 = __importStar(require("react"));
 var draggable_module_css_1 = __importDefault(require("./draggable.module.css"));
+var reorder = function (original, from, to) {
+    var elemsCopy = original.flatMap(function (elem, i) {
+        switch (i) {
+            case to:
+                return to - from > 0 ? [elem, original[from]] : [original[from], elem];
+            case from:
+                return [];
+            default:
+                return [elem];
+        }
+    });
+    return elemsCopy;
+};
+exports.reorder = reorder;
 var DraggableComponent = function (_a) {
     var children = _a.children, onPosChange = _a.onPosChange;
     var _b = (0, react_1.useState)([]), elems = _b[0], setElems = _b[1];
@@ -49,20 +63,10 @@ var DraggableComponent = function (_a) {
     }, [children]);
     var insertElementBefore = (0, react_1.useCallback)(function () {
         if (indexes.from !== null && indexes.to !== null && indexes.from !== indexes.to) {
-            var from_1 = indexes.from, to_1 = indexes.to;
-            var elemsCopy = elems.flatMap(function (elem, i) {
-                switch (i) {
-                    case to_1:
-                        return to_1 - from_1 > 0 ? [elem, elems[from_1]] : [elems[from_1], elem];
-                    case from_1:
-                        return [];
-                    default:
-                        return [elem];
-                }
-            });
-            setElems(elemsCopy);
+            var from = indexes.from, to = indexes.to;
+            setElems((0, exports.reorder)(elems, from, to));
             onPosChange &&
-                ((to_1 - from_1 > 0) ? onPosChange(to_1, from_1) : onPosChange(from_1, to_1));
+                ((to - from > 0) ? onPosChange(to, from) : onPosChange(from, to));
         }
         setIndexes({ to: null, from: null });
     }, [indexes, elems, onPosChange, setElems, setIndexes]);

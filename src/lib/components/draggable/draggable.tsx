@@ -7,6 +7,20 @@ interface DraggableComponentIndexes {
   from: number | null;
 }
 
+export const reorder = <T,>(original: T[], from: number, to: number): T[] => {
+  const elemsCopy = original.flatMap((elem, i) => {
+    switch (i) {
+    case to:
+      return to - from > 0 ? [elem, original[from]] : [original[from], elem];
+    case from:
+      return [];
+    default:
+      return [elem];
+    }
+  });
+  return elemsCopy;
+};
+
 export const DraggableComponent = ({
   children,
   onPosChange
@@ -24,17 +38,7 @@ export const DraggableComponent = ({
   const insertElementBefore = useCallback(() => {
     if (indexes.from !== null && indexes.to !== null && indexes.from !== indexes.to) {
       const {from, to} = indexes;
-      const elemsCopy = elems.flatMap((elem, i) => {
-        switch(i) {
-          case to:
-            return to - from > 0 ? [elem, elems[from]] : [elems[from], elem];
-          case from:
-            return [];
-          default:
-            return [elem]
-        }
-      });
-      setElems(elemsCopy);
+      setElems(reorder(elems, from, to));
 
       onPosChange && 
         ((to - from > 0) ? onPosChange(to, from) : onPosChange(from, to));
